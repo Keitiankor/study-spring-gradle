@@ -38,6 +38,11 @@ public class PreparedStatmentFommater extends JdbcDaoSupport {
         pstmt.setString(4, s4);
     }
 
+    private PreparedStatmentFommater(String sql, String s1, String s2, String s3, String s4, String s5) throws SQLException {
+        new PreparedStatmentFommater(sql, s1, s2, s3, s5);
+        pstmt.setString(5, s5);
+    }
+
     public static PreparedStatement getPreparedStatement(String sql)throws SQLException{
         new PreparedStatmentFommater(sql);
         return pstmt;
@@ -62,6 +67,12 @@ public class PreparedStatmentFommater extends JdbcDaoSupport {
     public static PreparedStatement getPreparedStatement(String sql, String s1, String s2, String s3, String s4)
             throws SQLException {
         new PreparedStatmentFommater(sql, s1, s2, s3, s4);
+        return pstmt;
+    }
+
+    public static PreparedStatement getPreparedStatement(String sql, String s1, String s2, String s3, String s4, String s5)
+            throws SQLException {
+        new PreparedStatmentFommater(sql, s1, s2, s3, s4, s5);
         return pstmt;
     }
 

@@ -9,4 +9,6 @@ public interface AccountService {
 
     int deleteAccountDao(String id, String password);
 
+    int ChangePasswordDao(String account, String oldPassword, String newPassword);
+
 }

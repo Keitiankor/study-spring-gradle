@@ -3,7 +3,6 @@ package com.example.studyspringgradle.domain.account.service;
 import com.example.studyspringgradle.domain.account.dao.AccountRepositoryImpl;
 import com.example.studyspringgradle.global.encrypt.RegexChecker;
 import com.example.studyspringgradle.global.response.exception.business.AccountConflictException;
-import com.example.studyspringgradle.global.response.exception.business.BadRequestException;
 import com.example.studyspringgradle.global.response.exception.business.WrongAccountFormatException;
 import com.example.studyspringgradle.global.response.exception.business.WrongPasswordException;
 import com.example.studyspringgradle.global.response.exception.business.WrongPasswordFormatExvception;
@@ -32,7 +31,10 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public boolean checkAccountPassDao(String id, String password) {
-        return accountRepositoryImpl.checkAccountPass(id, password);
+        if(!accountRepositoryImpl.checkAccountPass(id, password)){
+            throw new WrongPasswordException();
+        }
+        return true; 
     }
 
     @Override
@@ -42,25 +44,11 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public int deleteAccountDao(String id, String password) {
-        int validation = accountRepositoryImpl.deleteAccount(id, password);
-        if (validation == 0) {
-            throw new WrongPasswordException();
-        }
-        if (validation < 0) {
-            throw new BadRequestException();
-        }
-        return validation;
+        return accountRepositoryImpl.deleteAccount(id, password);
     }
 
     @Override
     public int ChangePasswordDao(String account, String oldPassword, String newPassword) {
-        int validation = accountRepositoryImpl.ChangePassword(account, oldPassword, newPassword);
-        if (validation == 0) {
-            throw new WrongPasswordException();
-        }
-        if (validation < 0) {
-            throw new BadRequestException();
-        }
-        return validation;
+        return accountRepositoryImpl.ChangePassword(account, oldPassword, newPassword);
     }
 }

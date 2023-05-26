@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 
 import com.example.studyspringgradle.domain.board.dao.BoardRepositoryImpl;
 import com.example.studyspringgradle.domain.board.domain.BoardPost;
+import com.example.studyspringgradle.domain.board.domain.BoardPosts;
 import com.example.studyspringgradle.domain.board.domain.PostedPost;
+import com.example.studyspringgradle.global.response.exception.business.BadRequestException;
 
 @Service
 public class BoardServiceImpl implements BoardService {
@@ -17,17 +19,20 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public List<BoardPost> getAllPostDao() {
+    public List<BoardPosts> getAllPostDao() {
         return boardReposiroryImpl.getAllPost();
     }
 
     @Override
     public BoardPost getSinglePostDao(int postId) {
-        return boardReposiroryImpl.getSingPost(postId);
+        return boardReposiroryImpl.getSinglePost(postId);
     }
 
     @Override
-    public List<BoardPost> getPagePostDao(int limit, int offset) {
+    public List<BoardPosts> getPagePostDao(int limit, int offset) {
+        if(limit<5 || limit >10 || offset<0){
+            throw new BadRequestException();
+        }
         return boardReposiroryImpl.getPagePost(limit, offset);
     }
 
@@ -41,4 +46,13 @@ public class BoardServiceImpl implements BoardService {
         return boardReposiroryImpl.postNewPost(title, content, account, password);
     }
 
+    @Override
+    public String postNewCommnetDao(String comment, int postId){
+        return boardReposiroryImpl.postNewComment(comment, postId);
+    }
+
+    @Override
+    public boolean postLikeDislike(String account, String password, int postId, boolean likeDislike){
+        return boardReposiroryImpl.postLikeDislike(account, password, postId, likeDislike);
+    }
 }

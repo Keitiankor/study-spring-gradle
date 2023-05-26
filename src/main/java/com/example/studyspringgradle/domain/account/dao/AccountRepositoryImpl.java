@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.example.studyspringgradle.global.PreparedStatmentFommater;
 import com.example.studyspringgradle.global.encrypt.SHA256;
+import com.example.studyspringgradle.global.response.exception.business.WrongPasswordException;
 
 import jakarta.annotation.PostConstruct;
 
@@ -96,7 +97,7 @@ public class AccountRepositoryImpl extends JdbcDaoSupport implements AccountRepo
         String cryptogram = SHA256.encrypt(password);
         int accId = getAccountInfo(id, cryptogram);
         if (accId == 0) {
-            return 0;
+            throw new WrongPasswordException();
         }
         String sql = """
                 delete from user_account where account_id = ?
@@ -106,7 +107,6 @@ public class AccountRepositoryImpl extends JdbcDaoSupport implements AccountRepo
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-            return -1;
         }
         return accId;
     }
@@ -117,7 +117,7 @@ public class AccountRepositoryImpl extends JdbcDaoSupport implements AccountRepo
         String newCryptogram = SHA256.encrypt(newPassword);
         int accId = getAccountInfo(id, oldCryptogram);
         if (accId == 0) {
-            return 0;
+            throw new WrongPasswordException();
         }
         String sql = """
                 update user_account set account_password = ? where account_id = ?
@@ -128,7 +128,6 @@ public class AccountRepositoryImpl extends JdbcDaoSupport implements AccountRepo
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-            return -1;
         }
         return accId;
     }

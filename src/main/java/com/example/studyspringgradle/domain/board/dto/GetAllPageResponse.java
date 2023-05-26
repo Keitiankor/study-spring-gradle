@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.example.studyspringgradle.domain.board.domain.BoardPost;
+import com.example.studyspringgradle.domain.board.domain.BoardPosts;
 import com.example.studyspringgradle.global.response.normal.Response;
 import com.example.studyspringgradle.global.response.normal.ResponseCode;
 
@@ -13,9 +13,9 @@ import lombok.Getter;
 
 @Getter
 public class GetAllPageResponse {
-    List<BoardPost> postList;
+    List<BoardPosts> postList;
 
-    public GetAllPageResponse(List<BoardPost> postList) {
+    public GetAllPageResponse(List<BoardPosts> postList) {
         this.postList = postList;
     }
 

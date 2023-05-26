@@ -3,12 +3,13 @@ package com.example.studyspringgradle.domain.board.service;
 import java.util.List;
 
 import com.example.studyspringgradle.domain.board.domain.BoardPost;
+import com.example.studyspringgradle.domain.board.domain.BoardPosts;
 import com.example.studyspringgradle.domain.board.domain.PostedPost;
 
 public interface BoardService {
-    List<BoardPost> getAllPostDao();
+    List<BoardPosts> getAllPostDao();
 
-    List<BoardPost> getPagePostDao(int limit, int offset);
+    List<BoardPosts> getPagePostDao(int limit, int offset);
 
     BoardPost getSinglePostDao(int postId);
 
@@ -16,4 +17,7 @@ public interface BoardService {
 
     PostedPost postNewPostDao(String title, String content, String account, String password);
 
+    String postNewCommnetDao(String comment, int postId);
+
+    boolean postLikeDislike(String account, String password, int postId, boolean likeDislike);
 }

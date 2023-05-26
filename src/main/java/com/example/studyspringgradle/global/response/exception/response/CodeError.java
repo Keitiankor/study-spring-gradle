@@ -12,6 +12,8 @@ public enum CodeError {
     WRONG_ACCOUNT_FORMAT(400, "E002"), // 아이디 형식 불일치
     WRONG_PASSWORD_FORMAT(400,"E003"), // 비밀번호 형식 불일치
     WRONG_PASSWORD(400, "E004"), // 비밀번호 불일치
+
+    AREADY_LDL(400, "E010"),
     ;
 
     private final String code;

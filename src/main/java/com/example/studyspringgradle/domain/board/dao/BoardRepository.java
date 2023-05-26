@@ -3,16 +3,21 @@ package com.example.studyspringgradle.domain.board.dao;
 import java.util.List;
 
 import com.example.studyspringgradle.domain.board.domain.BoardPost;
+import com.example.studyspringgradle.domain.board.domain.BoardPosts;
 import com.example.studyspringgradle.domain.board.domain.PostedPost;
 
 public interface BoardRepository {
-    List<BoardPost> getAllPost();
+    List<BoardPosts> getAllPost();
 
-    List<BoardPost> getPagePost(int limit, int offset);
+    List<BoardPosts> getPagePost(int limit, int offset);
 
-    BoardPost getSingPost(int postId);
+    BoardPost getSinglePost(int postId);
 
     PostedPost postNewPost(String title, String password, String content);
 
     PostedPost postNewPost(String title, String content, String account, String password);
+
+    String postNewComment(String comment, int postId);
+
+    boolean postLikeDislike(String account, String password, int postId, boolean likeDislike);
 }
