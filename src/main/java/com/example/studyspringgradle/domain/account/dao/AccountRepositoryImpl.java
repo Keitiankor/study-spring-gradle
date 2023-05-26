@@ -7,7 +7,6 @@ import javax.sql.DataSource;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 
-import com.example.studyspringgradle.global.Closer;
 import com.example.studyspringgradle.global.PreparedStatmentFommater;
 import com.example.studyspringgradle.global.encrypt.SHA256;
 
