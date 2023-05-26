@@ -10,4 +10,6 @@ public interface AccountRepository {
 
     int deleteAccount(String id, String password);
 
+    int ChangePassword(String id, String oldPassword, String newPassword);
+
 }
