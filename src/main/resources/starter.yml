@@ -1,0 +1,16 @@
+server:
+  port: 9001
+  error:
+    whitelabel:
+      enabled: false
+  
+spring:
+  application:
+    name: board-getter
+  mvc:
+    throw-exception-if-no-handler-found: true
+  datasource:
+    dirver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.56.1:3307/study_site1?zeroDateTimeBehavior=convertToNull
+    username: study
+    password: qwer1234
