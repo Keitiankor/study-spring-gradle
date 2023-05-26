@@ -29,5 +29,8 @@ public class AccountServiceImpl implements AccountService {
         return accountRepositoryImpl.deleteAccount(id, password);
     }
 
-    
+    @Override
+    public int ChangePasswordDao(String account, String oldPassword, String newPassword){
+        return accountRepositoryImpl.ChangePassword(account, oldPassword, newPassword);
+    }
 }
