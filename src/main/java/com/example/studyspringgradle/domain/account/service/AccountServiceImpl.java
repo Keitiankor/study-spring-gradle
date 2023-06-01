@@ -5,7 +5,7 @@ import com.example.studyspringgradle.global.encrypt.RegexChecker;
 import com.example.studyspringgradle.global.response.exception.business.AccountConflictException;
 import com.example.studyspringgradle.global.response.exception.business.WrongAccountFormatException;
 import com.example.studyspringgradle.global.response.exception.business.WrongPasswordException;
-import com.example.studyspringgradle.global.response.exception.business.WrongPasswordFormatExvception;
+import com.example.studyspringgradle.global.response.exception.business.WrongPasswordFormatException;
 
 public class AccountServiceImpl implements AccountService {
     private final AccountRepositoryImpl accountRepositoryImpl;
@@ -20,7 +20,7 @@ public class AccountServiceImpl implements AccountService {
             throw new WrongAccountFormatException();
         }
         if (!RegexChecker.passwordChecker(password)) {
-            throw new WrongPasswordFormatExvception();
+            throw new WrongPasswordFormatException();
         }
         if (!checkAccountAvailableDao(id)) { // is not available?
             throw new AccountConflictException();
@@ -31,10 +31,10 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public boolean checkAccountPassDao(String id, String password) {
-        if(!accountRepositoryImpl.checkAccountPass(id, password)){
+        if (!accountRepositoryImpl.checkAccountPass(id, password)) {
             throw new WrongPasswordException();
         }
-        return true; 
+        return true;
     }
 
     @Override

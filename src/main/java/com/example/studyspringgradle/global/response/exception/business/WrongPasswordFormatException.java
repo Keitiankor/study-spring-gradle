@@ -2,10 +2,10 @@ package com.example.studyspringgradle.global.response.exception.business;
 
 import com.example.studyspringgradle.global.response.exception.response.CodeError;
 
-public class WrongPasswordFormatExvception extends BusinessException {
+public class WrongPasswordFormatException extends BusinessException {
 
-    public WrongPasswordFormatExvception(){
+    public WrongPasswordFormatException() {
         super(CodeError.WRONG_PASSWORD_FORMAT);
     }
-    
+
 }

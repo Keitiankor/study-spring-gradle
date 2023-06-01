@@ -14,7 +14,6 @@ import com.example.studyspringgradle.domain.board.domain.PostedPost;
 import com.example.studyspringgradle.global.PreparedStatmentFommater;
 import com.example.studyspringgradle.global.Tuple;
 import com.example.studyspringgradle.global.encrypt.SHA256;
-import com.example.studyspringgradle.global.response.exception.business.AreadyLikeDislikeException;
 import com.example.studyspringgradle.global.response.exception.business.BadRequestException;
 import com.example.studyspringgradle.global.response.exception.business.IsNullDataException;
 import com.example.studyspringgradle.global.response.exception.business.WrongPostIdException;
@@ -298,22 +297,28 @@ public class BoardRepositoryImpl extends JdbcDaoSupport implements BoardReposito
 
     @Override
     public boolean postLikeDislike(String account, String password, int postId, boolean likeDislike) {
-        getCheckAreadyldl(account, postId);
+        Tuple<Boolean, String> isAreadyldl = getAreadyldl(account, postId);
         int accId = getAccountId(account);
-        String ldl;
+
+        if (isAreadyldl.getObjectA()) {
+            return swapLikeDislike(isAreadyldl.getObjectB(), postId, accId, likeDislike);
+        }
+        String ldl = "dislikes";
+        String ldld = "disliked";
         if (likeDislike) {
             ldl = "likes";
-        } else {
-            ldl = "dislikes";
+            ldld = "liked";
         }
+
         int count = getCountLikeDislike(ldl, postId);
         String sql = """
-                insert into like_dislike (account_id, id, have_checked)
+                insert into like_dislike (account_id, id, ?)
                 values (?, ?, 1);
                 update board set ? = '?' WHERE id = '?';
                 """;
-        try (PreparedStatement pstmt = PreparedStatmentFommater.getPreparedStatement(sql, Integer.toString(accId),
-                Integer.toString(postId), ldl, Integer.toString(count + 1), Integer.toString(postId))) {
+        try (PreparedStatement pstmt = PreparedStatmentFommater
+                .getPreparedStatement(sql, ldld, Integer.toString(accId), Integer.toString(postId), ldl,
+                        Integer.toString(count + 1), Integer.toString(postId))) {
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -321,9 +326,61 @@ public class BoardRepositoryImpl extends JdbcDaoSupport implements BoardReposito
         return true;
     }
 
+    private boolean swapLikeDislike(String isAreadyldl, int postId, int accId, boolean likeDislike) {
+        int likedC = getCountLikeDislike("likes", postId);
+        int dislikedC = getCountLikeDislike("dislikes", postId);
+        boolean ldl = isAreadyldl.equals("have_liked");
+
+        if (ldl == likeDislike) {
+            if (likeDislike) {
+                likedC--;
+            } else {
+                dislikedC--;
+            }
+        } else {
+            if (likeDislike) {
+                likedC++;
+                dislikedC--;
+            } else {
+                likedC--;
+                dislikedC++;
+            }
+        }
+        String str1 = """
+                update board set likes = ?, dislikes = ? where id = ?;
+                """;
+        String str2 = """
+                update like_dislike set liked = ?, disliked = ? where id = ?, account_id = ?;
+                        """;
+        try (
+                PreparedStatement pstmt = PreparedStatmentFommater
+                        .getPreparedStatement(str1,
+                                Integer.toString(likedC),
+                                Integer.toString(dislikedC),
+                                Integer.toString(postId))) {
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        try (
+                PreparedStatement pstmt = PreparedStatmentFommater
+                        .getPreparedStatement(str2,
+                                Boolean.toString(ldl == likeDislike ? false : likeDislike),
+                                Boolean.toString(ldl == likeDislike ? false : !likeDislike),
+                                Integer.toString(postId), Integer.toString(accId))) {
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+
+    }
+
     private int getCountLikeDislike(String ldl, int postId) {
         String sql = """
-                select ? from like_dislike where id = ? & account_id = ?
+                select ? from board where id = ?;
                 """;
         int count = 0;
         try (PreparedStatement pstmt = PreparedStatmentFommater
@@ -340,22 +397,28 @@ public class BoardRepositoryImpl extends JdbcDaoSupport implements BoardReposito
         return count;
     }
 
-    private void getCheckAreadyldl(String account, int postid) {
+    private Tuple<Boolean, String> getAreadyldl(String account, int postid) {
         int accId = getAccountId(account);
+        Tuple<Boolean, String> returnData = null;
         String sql = """
-                select have_checked from like_dislike
-                where id = ? & account_id = ?
-                """;
+                select have_liked, have_disliked from like_dislike
+                where account_id = ? & id = ?
+                    """;
         try (PreparedStatement pstmt = PreparedStatmentFommater
                 .getPreparedStatement(sql, Integer.toString(accId), Integer.toString(postid))) {
             pstmt.executeQuery();
             ResultSet rs = pstmt.getResultSet();
-            if (rs.next()) {
-                throw new AreadyLikeDislikeException();
-            }
+            boolean liked = rs.getBoolean("have_liked");
+            boolean disliked = rs.getBoolean("have_disliked");
+            if (liked | disliked)
+                returnData = liked ? new Tuple<Boolean, String>(true, "have_liked")
+                        : new Tuple<Boolean, String>(true, "have_disliked");
+            else
+                returnData = new Tuple<Boolean, String>(false, "");
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return returnData;
     }
 
     private int getAccountId(String account) {
